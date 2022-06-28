@@ -14,22 +14,19 @@ input.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 function onSearch(event) {
   clearResults();
   const inputValue = event.target.value;
-  inputValue.trim();
-
-  if (inputValue === '') {
+  inputValue.trim().toLowerCase();
+  if (inputValue === ' ') {
     return;
   }
 
-    fetchCountries(inputValue)
-        .then(renderCountries)
-        .catch(onFetchError)
+  fetchCountries(inputValue).then(renderCountries).catch(onFetchError);
 }
 
-    function renderCountries(countries) {
-        console.log(countries);
-        const countriesLength = countries.length;
+function renderCountries(countries) {
+  console.log(countries);
+  const countriesLength = countries.length;
 
-       if (countriesLength > 10) {
+  if (countriesLength > 10) {
     Notify.info('Too many matches found. Please enter a more specific name');
   } else if (countriesLength === 1) {
     const markup = countries
@@ -39,10 +36,14 @@ function onSearch(event) {
         }" alt="country flags" width = 40px> ${name.official}</h2>
           <p class="capital"><span class="span">Capital:</span> ${capital} </p>
           <p class="population"><span class="span">Population:</span> ${population} </p>
-         <p class="languages"><span class="span">Languages:</span> ${Object.values(languages)}</p></div>`;
-     })
+         <p class="languages"><span class="span">Languages:</span> ${Object.values(
+           languages
+         )}</p></div>`;
+      })
       .join('');
     countryInformation.innerHTML = markup;
+  } else if (countries.status === 404) {
+    return Notify.failure('Oops, there is no country with that name');
   } else {
     const markupShortList = countries
       .map(({ name, flags }) => {
@@ -52,14 +53,13 @@ function onSearch(event) {
 
     countryList.innerHTML = markupShortList;
   }
-    }
+}
 
 function onFetchError(error) {
-     Notify.failure('Oops, there is no country with that name');
-    }
+  Notify.failure('Oops, there is no country with that name');
+}
 
 function clearResults() {
   countryInformation.innerHTML = '';
   countryList.innerHTML = '';
 }
-
