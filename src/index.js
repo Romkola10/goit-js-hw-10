@@ -9,13 +9,20 @@ const countryInformation = document.querySelector('.country-info');
 const input = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 
+
+input.oninput = () => {
+  if(input.value.charAt(0) === ' ') {
+    input.value = '';
+  }
+}
+
 input.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(event) {
   clearResults();
   const inputValue = event.target.value;
   inputValue.trim().toLowerCase();
-  if (inputValue === ' ') {
+  if (inputValue === '') {
     return;
   }
 
@@ -42,9 +49,7 @@ function renderCountries(countries) {
       })
       .join('');
     countryInformation.innerHTML = markup;
-  } else if (countries.status === 404) {
-    return Notify.failure('Oops, there is no country with that name');
-  } else {
+  }  else if(countriesLength > 2 && countriesLength < 10) {
     const markupShortList = countries
       .map(({ name, flags }) => {
         return `<h2 class="country"><img src="${flags.svg}" alt="country flags" width = 40px> ${name.official}</h2>`;
@@ -55,11 +60,14 @@ function renderCountries(countries) {
   }
 }
 
-function onFetchError(error) {
+
+function onFetchError(Error) {
   Notify.failure('Oops, there is no country with that name');
 }
 
-function clearResults() {
+ function clearResults() {
   countryInformation.innerHTML = '';
   countryList.innerHTML = '';
 }
+
+
