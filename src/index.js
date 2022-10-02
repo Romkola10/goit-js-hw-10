@@ -49,7 +49,7 @@ function renderCountries(countries) {
       })
       .join('');
     countryInformation.innerHTML = markup;
-  }  else if(countriesLength > 2 && countriesLength < 10) {
+  }  else if(countriesLength > 2 && countriesLength <= 10) {
     const markupShortList = countries
       .map(({ name, flags }) => {
         return `<h2 class="country"><img src="${flags.svg}" alt="country flags" width = 40px> ${name.official}</h2>`;
